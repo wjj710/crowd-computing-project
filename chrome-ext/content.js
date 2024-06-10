@@ -1,4 +1,4 @@
-const GPTSM_ENDPOINT = "http://127.0.0.1:5000/convert_paragraphs";
+const GPTSM_ENDPOINT = "http://127.0.0.1:5000/";
 
 // chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 //     // TODO: use different template for different URLs

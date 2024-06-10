@@ -16,12 +16,22 @@ PARAGRAPH_SHORTEST = 10
 LINE_LENGTH = 89
 
 
-@app.route('/')
-def automated():
-    return render_template('automated.html', sentence_list=[])
+@app.route('/', methods=['POST', 'OPTIONS'])
+@cross_origin()
+def connect():
+    if request.method == "OPTIONS": # CORS preflight
+        return _build_cors_preflight_response()
+    elif request.method == "POST": # The actual request following the preflight
+        return convert_paragraphs(request)
 
-@app.route('/convert_paragraphs', methods=['POST'])
-def convert_paragraphs():
+def _build_cors_preflight_response():
+    response = make_response()
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add('Access-Control-Allow-Headers', "*")
+    response.headers.add('Access-Control-Allow-Methods', "*")
+    return response
+
+def convert_paragraphs(request):
     plain_paragraphs = request.form.get("payload")
     logger.info(f'paragraphs to convert: {plain_paragraphs}')
 
@@ -38,8 +48,9 @@ def convert_paragraphs():
         styled_paragraphs.append(vl0)
 
     logger.info(f'styled_paragraphs: {styled_paragraphs}')
-    res = make_response(styled_paragraphs)
-    return res, 200
+    response = make_response(styled_paragraphs)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 def is_equal(w1, w2):
     punc = ['.', ',', ':', '?', '!', ';', '"', '(', ')']
