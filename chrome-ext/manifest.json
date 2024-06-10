@@ -1,0 +1,14 @@
+{
+    "manifest_version": 3,
+   
+    "name": "GP-TSM for web",
+    "version": "0.1.0",
+    "description": "Apply GP-TSM for Wikipedia",
+   
+    "content_scripts": [{
+      "css": ["style.css"],
+      "js": ["content.js"],
+      "matches": ["https://en.wikipedia.org/*"]
+    }]
+   
+  }
