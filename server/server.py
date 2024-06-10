@@ -26,31 +26,31 @@ def connect():
 
 def _build_cors_preflight_response():
     response = make_response()
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    response.headers.add('Access-Control-Allow-Headers', "*")
-    response.headers.add('Access-Control-Allow-Methods', "*")
+    response.access_control_allow_origin = '*'
+    response.access_control_allow_headers = '*'
+    response.access_control_allow_headers = '*'
     return response
 
 def convert_paragraphs(request):
-    plain_paragraphs = request.form.get("payload")
+    plain_paragraphs = request.form.getlist("payload")
     logger.info(f'paragraphs to convert: {plain_paragraphs}')
 
     styled_paragraphs = []
 
     for p in plain_paragraphs:
+        p = p.strip()
         vl0 = ''
-        try:
-            for d in llm.get_shortened_paragraph(p, openaikey.key):
-                vl0 += generate_vl0(d['0'], d['1'], d['2'], d['3'], d['4']) + ' '
-        except Exception as e:
-            flash(f'An authentication error occurred: openai.error.AuthenticationError: Incorrect API key provided', 'error')
-            return redirect(url_for('automated'))
+        if len(p) > 0:
+            try:
+                for d in llm.get_shortened_paragraph(p, openaikey.key):
+                    vl0 += generate_vl0(d['0'], d['1'], d['2'], d['3'], d['4']) + ' '
+            except Exception as e:
+                flash(f'An authentication error occurred: openai.error.AuthenticationError: Incorrect API key provided', 'error')
+                return redirect(url_for('automated'))
         styled_paragraphs.append(vl0)
 
-    logger.info(f'styled_paragraphs: {styled_paragraphs}')
-    response = make_response(styled_paragraphs)
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    return response
+    res = {'payload': styled_paragraphs}
+    return res
 
 def is_equal(w1, w2):
     punc = ['.', ',', ':', '?', '!', ';', '"', '(', ')']
@@ -99,24 +99,6 @@ def generate_vl0(l0, l1, l2, l3, l4): # underline
         else:
             rst += ('<span class="gptsm-l0"> ' + w + ' </span> ')
     return rst
-
-
-def add_linebreaks(p, line_length):
-    count = 0
-    rst = ''
-    for w in p.split():
-        rst += (w + ' ')
-        if '<span' not in w and 'background-color' not in w and 'color' not in w and '</span>' not in w:
-            if '<b>' in w:
-                count += (len(w) + 1 - 7) 
-            else:
-                count += (len(w) + 1) 
-            if count > line_length:
-                rst += '<br>'
-                count  = 0
-    return rst
-    # return p
-
 
 if __name__ == "__main__":
     with app.app_context():
