@@ -42,19 +42,28 @@ def convert_paragraphs(request):
     for i, p in enumerate(plain_paragraphs):
         logger.info(f"Processing paragraph {i+1}/{l}...")
         p = p.strip()
+        
+        if len(p) == 0:
+            styled_paragraphs.append('')
+            continue
+
         vl0 = ''
-        if len(p) > 0:
-            logger.info(p)
+        logger.info(p)
+        err_cnt = 0
+        while(True):
             try:
                 for d in llm.get_shortened_paragraph(p, openaikey.key):
                     vl0 += generate_vl0(d['0'], d['1'], d['2'], d['3'], d['4']) + ' '
+                logger.info(vl0)
+                styled_paragraphs.append(vl0)
+                break
             except Exception as e:
                 flash(f'An authentication error occurred: openai.error.AuthenticationError: Incorrect API key provided', 'error')
-                # return make_response(), 500
+                logger.error(f'Failed to process paragraph {i} :( Retry count={err_cnt}')
                 styled_paragraphs.append(p)
-                continue
-            logger.info(vl0)
-        styled_paragraphs.append(vl0)
+                err_cnt += 1
+                if(err_cnt >= 3):
+                    break        
 
     data = {'payload': json.dumps(styled_paragraphs)}
     response = make_response(data)
