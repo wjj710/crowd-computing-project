@@ -59,7 +59,7 @@ def convert_paragraphs(request):
 
     data = {'payload': json.dumps(styled_paragraphs)}
     response = make_response(data)
-    response.access_control_allow_origin = '*'
+    # response.access_control_allow_origin = '*'
     return response
 
 def is_equal(w1, w2):

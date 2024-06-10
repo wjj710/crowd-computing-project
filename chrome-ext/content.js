@@ -24,8 +24,8 @@ function requestGPTSM(l, elements, plain_text) {
     })
     .then(response => response.json())
     .then((json) => {
-        console.log(json);
-        styled_text = json['payload'];
+        styled_text = JSON.parse(json['payload']);
+        console.log(styled_text);
         for (var i = 0; i < l; i++) {
             elements[i].innerHTML = styled_text[i];
         }
