@@ -1,9 +1,9 @@
 .gptsm-l0 {
-    opacity: 100%;
+    opacity: 20%;
 }
 
 .gptsm-l1 {
-    opacity: 80%;
+    opacity: 40%;
 }
 
 .gptsm-l2 {
@@ -11,9 +11,5 @@
 }
 
 .gptsm-l3 {
-    opacity: 40%;
-}
-
-.gptsm-l4 {
-    opacity: 20%;
+    opacity: 80%;
 }

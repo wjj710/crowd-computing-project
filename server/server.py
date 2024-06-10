@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect, url_for, make_response
+from flask import Flask, request, flash, make_response
 from flask_cors import CORS, cross_origin
 import openaikey
 import llm
@@ -26,6 +26,7 @@ def connect():
         return convert_paragraphs(request)
 
 def _build_cors_preflight_response():
+    # https://stackoverflow.com/questions/25594893/how-to-enable-cors-in-flask
     response = make_response()
     response.access_control_allow_origin = '*'
     response.access_control_allow_headers = '*'
@@ -33,9 +34,7 @@ def _build_cors_preflight_response():
     return response
 
 def convert_paragraphs(request):
-    payload = request.form.get("payload")
-    logger.info(f'payload: {payload}')
-    plain_paragraphs = json.loads(payload)
+    plain_paragraphs = json.loads(request.form.get("payload"))
 
     styled_paragraphs = []
 
@@ -92,7 +91,7 @@ def generate_vl0(l0, l1, l2, l3, l4): # underline
             matched = False
             if p4 < len(l4_lst) and is_equal(w, l4_lst[p4]):
                 p4 += 1
-                rst += ('<span class="gptsm-l4"> ' + w + ' </span> ')
+                rst += (' ' + w + ' ')
                 matched = True
             if p3 < len(l3_lst) and is_equal(w, l3_lst[p3]):
                 p3 += 1
