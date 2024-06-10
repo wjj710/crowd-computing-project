@@ -1,3 +1,8 @@
+# only on local
+openaikey.py
+grammar_checks.json
+shortened_responses.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

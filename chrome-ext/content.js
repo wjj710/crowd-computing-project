@@ -1,4 +1,4 @@
-const GPTSM_SERVER = "127.0.0.1:5000";
+const GPTSM_ENDPOINT = "http://127.0.0.1:5000/convert_paragraphs";
 
 // chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 //     // TODO: use different template for different URLs
@@ -24,20 +24,26 @@ function onNewPage() {
 }
 
 function requestGPTSM(l, paragraphs, plain_text) {
-    // fetch("GPTSM_SERVER", {
-    //     method: "POST",
-    //     body: plain_text
-    // })
-    // .then((response) => response.json())
-    // .then((json) => updatePage(paragraphs, json));
+    var fd = new FormData();
+    fd.append("payload", plain_text);
 
-    var styled_text = new Array(l);
-    for (var i = 0; i < l; i++) {
-        level = Math.floor(Math.random() * 5);
-        styled_text[i] = `<span class="gptsm-l${level}">${plain_text[i]}</>`;
-    }
+    fetch(GPTSM_ENDPOINT, {
+        method: "POST",
+        body: fd
+    })
+    .then((response) => response.json())
+    .then((json) => {
+        console.log(json);
+        // updatePage(paragraphs, json);
+    });
 
-    updatePage(l, paragraphs, styled_text)
+    // var styled_text = new Array(l);
+    // for (var i = 0; i < l; i++) {
+    //     level = Math.floor(Math.random() * 5);
+    //     styled_text[i] = `<span class="gptsm-l${level}">${plain_text[i]}</>`;
+    // }
+
+    // updatePage(l, paragraphs, styled_text)
 }
 
 function updatePage(l, paragraphs, styled_text) {

@@ -9,6 +9,8 @@
       "css": ["style.css"],
       "js": ["content.js"],
       "matches": ["https://en.wikipedia.org/*"]
-    }]
+    }],
+
+    "host_permissions": ["http://127.0.0.1:5000/*", "http://localhost/*"]
    
   }
