@@ -1,1 +1,0 @@
-# crowd-computing-project
