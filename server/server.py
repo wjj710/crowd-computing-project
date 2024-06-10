@@ -3,6 +3,7 @@ from flask_cors import CORS, cross_origin
 import openaikey
 import llm
 import logging
+import json
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -32,25 +33,34 @@ def _build_cors_preflight_response():
     return response
 
 def convert_paragraphs(request):
-    plain_paragraphs = request.form.getlist("payload")
-    logger.info(f'paragraphs to convert: {plain_paragraphs}')
+    payload = request.form.get("payload")
+    logger.info(f'payload: {payload}')
+    plain_paragraphs = json.loads(payload)
 
     styled_paragraphs = []
 
-    for p in plain_paragraphs:
+    l = len(plain_paragraphs)
+    for i, p in enumerate(plain_paragraphs):
+        logger.info(f"Processing paragraph {i+1}/{l}...")
         p = p.strip()
         vl0 = ''
         if len(p) > 0:
+            logger.info(p)
             try:
                 for d in llm.get_shortened_paragraph(p, openaikey.key):
                     vl0 += generate_vl0(d['0'], d['1'], d['2'], d['3'], d['4']) + ' '
             except Exception as e:
                 flash(f'An authentication error occurred: openai.error.AuthenticationError: Incorrect API key provided', 'error')
-                return redirect(url_for('automated'))
+                # return make_response(), 500
+                styled_paragraphs.append(p)
+                continue
+            logger.info(vl0)
         styled_paragraphs.append(vl0)
 
-    res = {'payload': styled_paragraphs}
-    return res
+    data = {'payload': json.dumps(styled_paragraphs)}
+    response = make_response(data)
+    response.access_control_allow_origin = '*'
+    return response
 
 def is_equal(w1, w2):
     punc = ['.', ',', ':', '?', '!', ';', '"', '(', ')']

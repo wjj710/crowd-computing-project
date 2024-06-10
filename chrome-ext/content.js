@@ -7,14 +7,16 @@ function updatePage() {
     var elements = document.getElementsByTagName('p');
     var l = elements.length;
 
+    var plain_text = new Array(l);
     for (var i = 0; i < l; i++) {
-        requestGPTSM(elements[i], elements[i].innerText);
+        plain_text[i] = elements[i].innerText;
     }
+    requestGPTSM(l, elements, plain_text);
 }
 
-function requestGPTSM(p, plain_text) {
+function requestGPTSM(l, elements, plain_text) {
     var fd = new FormData();
-    fd.append("payload", plain_text);
+    fd.append("payload", JSON.stringify(plain_text));
 
     fetch(GPTSM_ENDPOINT, {
         method: "POST",
@@ -23,6 +25,9 @@ function requestGPTSM(p, plain_text) {
     .then(response => response.json())
     .then((json) => {
         console.log(json);
-        p.innerHTML = json['payload'];
+        styled_text = json['payload'];
+        for (var i = 0; i < l; i++) {
+            elements[i].innerHTML = styled_text[i];
+        }
     });
 }
