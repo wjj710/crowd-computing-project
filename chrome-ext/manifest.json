@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
    
-    "name": "GP-TSM for web",
+    "name": "Web GP-TSM",
     "version": "0.1.0",
     "description": "Apply GP-TSM for Wikipedia",
    
